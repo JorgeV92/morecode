@@ -84,4 +84,146 @@ private:
             }
         }
     }
+
+    void computeIdomFromDom() {
+        idom[s] = -1;
+        for (int v : order) {
+            if (v == s) continue;
+            std::vector<int> strict;
+            for (int d : dom[v]) {
+                if (d != v) 
+                    strict.push_back(d);
+            }
+            for (int d : strict) {
+                bool valid = true;
+                for (int x : strict) {
+                    if (x == d) continue;
+                    if (!dom[d].count(x)) {
+                        valid = false;
+                        break;
+                    }
+                }
+                if (valid) {
+                    idom[v] = d;
+                    break;
+                }
+            }
+        }
+    }
+
+    bool semiPathExists(int u, int v) {
+        int threshold = pre[v];
+        std::vector<int> st; 
+        std::vector<bool> seen(n+1, false);
+        st.push_back(u);
+        seen[u] = true;
+        while (!st.empty()) {
+            int x = st.back();
+            st.pop_back();
+            if (x == v) return true;
+            for (int y : g[x]) {
+                if (pre[y] == 0) continue;
+                if (seen[y]) continue;
+                if (pre[y] >= threshold) {
+                    seen[y] = true;
+                    st.push_back(y);
+                }
+            }
+        }
+        return false; 
+    }
+
+     void computeSdom() {
+        sdom[s] = -1;
+        for (int v : order) {
+            if (v == s)
+                continue;
+            for (int u : order) {
+                if (pre[u] >= pre[v])
+                    break;
+                if (semiPathExists(u, v)) {
+                    sdom[v] = u;
+                    break;
+                }
+            }
+        }
+    }
+
+    std::vector<int> treePath(int ancestor, int v) {
+        std::vector<int> path;
+        int x = v;
+        while (x != ancestor) {
+            path.push_back(x);
+            x = parent[x];
+            if (x == -1)
+                throw std::runtime_error("Vertex is not an ancestor in DFS tree");
+        }
+
+        path.push_back(ancestor);
+        reverse(path.begin(), path.end());
+        return path;
+    }
+
+    void computeRdom() {
+        rdom[s] = -1;
+        for (int v : order) {
+            if (v == s)
+                continue;
+            int sd = sdom[v];
+            std::vector<int> path = treePath(sd, v);
+            int best = path[1];
+            for (int i = 1; i < (int)path.size(); ++i) {
+                int x = path[i];
+                if (pre[sdom[x]] < pre[sdom[best]]) {
+                    best = x;
+                }
+            }
+            rdom[v] = best;
+        }
+    }
+
+    void computeIdomFromSdomRdom() {
+        idomViaSdom[s] = -1;
+        for (int v : order) {
+            if (v == s)
+                continue;
+            if (rdom[v] == v) {
+                idomViaSdom[v] = sdom[v];
+            }
+            else {
+                idomViaSdom[v] =
+                    idomViaSdom[rdom[v]];
+            }
+        }
+    }
+
+public:
+
+     DominatorAnalyzer(const std::vector<std::vector<int>>& graph, int s) : g(graph), s(s) {
+        n = (int)g.size() - 1;
+        tree.resize(n + 1);
+        parent.assign(n + 1, -1);
+        pre.assign(n + 1, 0);
+        vis.assign(n + 1, false);
+        preds.resize(n + 1);
+        dom.resize(n + 1);
+        idom.assign(n + 1, -1);
+        sdom.assign(n + 1, -1);
+        rdom.assign(n + 1, -1);
+        idomViaSdom.assign(n + 1, -1);
+        // Compute everything
+        buildDFSTree();
+
+        buildPredecessors();
+
+        computeDominators();
+
+        computeIdomFromDom();
+
+        computeSdom();
+
+        computeRdom();
+
+        computeIdomFromSdomRdom();
+    }
 };
