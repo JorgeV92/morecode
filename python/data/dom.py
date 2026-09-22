@@ -144,4 +144,113 @@ class DominatorAnalyzer:
             else:
                 idom[v] = idom[self.rdom[v]] 
         return idom
-        
+
+
+class LengauerTarjan:
+    def __init__(self, n):
+        self.n = n
+        self.g = [[] for _ in range(n + 1)]
+        self.arr = [0] * (n + 1)
+        self.rev = [0] * (n + 1)
+        self.parent = [0] * (n + 1)
+        self.sdom = [0] * (n + 1)
+        self.idom = [0] * (n + 1)
+        self.rg = [[] for _ in range(n + 1)]
+        # bucket[x] contains vertices whose
+        # semidominator is x.
+        self.bucket = [[] for _ in range(n + 1)]
+        # Union-find / eval-link structure.
+        self.ancestor = [0] * (n + 1)
+        self.best = [0] * (n + 1)
+        self.timer = 0
+
+    def add_edge(self, u, v):
+        self.g[u].append(v)
+    
+    def _dfs(self, u):
+        self.timer += 1
+        self.arr[u] = self.timer
+        self.rev[self.timer] = u
+        self.sdom[self.timer] = self.timer
+        self.best[self.timer] = self.timer
+        for v in self.g[u]:
+            if self.arr[v] == 0:
+                self._dfs(v)
+                self.parent[self.arr[v]] = self.arr[u]
+            if self.arr[v] != 0:
+                self.rg[self.arr[v]].append(self.arr[u])
+
+    def _compress(self, v):
+        if self.ancestor[self.ancestor[v]] != 0:
+            self._compress(self.ancestor[v])
+            parent_best = self.best[self.ancestor[v]]
+            if self.sdom[parent_best] < self.sdom[self.best[v]]:
+                self.best[v] = parent_best
+            self.ancestor[v] = self.ancestor[self.ancestor[v]]
+
+    def _eval(self, v):
+        if self.ancestor[v] == 0:
+            return self.best[v]
+        self._compress(v)
+        parent_best = self.best[self.ancestor[v]]
+        if self.sdom[parent_best] < self.sdom[self.best[v]]:
+            return parent_best
+
+        return self.best[v]
+
+    def _link(self, parent, child):
+        self.ancestor[child] = parent
+
+    def compute(self, start):
+        self._dfs(start)
+        N = self.timer
+
+        for i in range(N, 1, -1):
+            for p in self.rg[i]:
+                u = self._eval(p)
+                self.sdom[i] = min(self.sdom[i], self.sdom[u])
+            self.bucket[self.sdom[i]].append(i)
+            self._link(self.parent[i], i)
+            for v in self.bucket[self.parent[i]]:
+                u = self._eval(v)
+                if self.sdom[u] == self.sdom[v]:
+                    self.idom[v] = self.sdom[v]
+                else:
+                    self.idom[v] = u
+            self.bucket[self.parent[i]].clear()
+        for i in range(2, N + 1):
+            if self.idom[i] != self.sdom[i]:
+                self.idom[i] = self.idom[self.idom[i]]
+        result = [-1] * (self.n + 1)
+        result[start] = -1
+        for i in range(2, N + 1):
+            vertex = self.rev[i]
+            dominator = self.rev[self.idom[i]]
+            result[vertex] = dominator
+        return result 
+
+
+def test_lt():
+    lt = LengauerTarjan(9)
+    lt.add_edge(1, 2)
+    lt.add_edge(1, 3)
+    lt.add_edge(2, 3)
+    lt.add_edge(2, 5)
+    lt.add_edge(2, 9)
+    lt.add_edge(3, 4)
+    lt.add_edge(4, 2)
+    lt.add_edge(5, 6)
+    lt.add_edge(5, 8)
+    lt.add_edge(6, 7)
+    lt.add_edge(6, 3)
+    lt.add_edge(7, 1)
+    lt.add_edge(7, 4)
+    lt.add_edge(7, 5)
+    lt.add_edge(8, 7)
+    lt.add_edge(9, 5)
+    lt.add_edge(9, 8)
+
+    idom = lt.compute(1)
+
+    for v in range(1, 10):
+        print(f"idom({v}) =", idom[v])
