@@ -109,8 +109,31 @@ class DominatorAnalyzer:
                 if self._semi_path_exits(u, v):
                     sdom[v] = u 
                     break 
-        return sdom 
+        return sdom
 
-    def _compute_rdom():
+    def _tree_path(self, ancestor, v):
+        path = []
+        x = v 
+        while x != ancestor:
+            path.append(x)
+            x = self.parent[x] 
+            if x is None:
+                raise ValueError(f"{ancestor} is not an ancestor of {v}")
+        path.append(ancestor)
+        path.reverse()
+        return path 
+
+    def _compute_rdom(self):
+        rdom = {self.s: None} 
+        for v in self.order:
+            if v == self.s:
+                continue
+            sd = self.sdom[v]
+            path = self._tree_path(sd, v)
+            candidates = path[1:]
+            rdom[v] = min(candidates, key=lambda x: self.pre[self.sdom[x]])
+        return rdom 
+
+    def _compute_idom_from_sdom_rdom(self):
         pass  
         
