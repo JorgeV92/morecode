@@ -135,5 +135,13 @@ class DominatorAnalyzer:
         return rdom 
 
     def _compute_idom_from_sdom_rdom(self):
-        pass  
+        idom = {self.s: None} 
+        for v in self.order:
+            if v == self.s:
+                continue
+            if self.rdom[v] == v:
+                idom[v] = self.sdom[v]
+            else:
+                idom[v] = idom[self.rdom[v]] 
+        return idom
         
