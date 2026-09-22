@@ -227,3 +227,119 @@ public:
         computeIdomFromSdomRdom();
     }
 };
+
+class LengauerTarjan {
+private:
+    int n, timer = 0;
+    std::vector<std::vector<int>> g, rg, bucket;
+
+    // DFS 
+    std::vector<int> arr;      // vertex -> dfs number
+    std::vector<int> rev;      // dfs number -> vertex
+
+    // Algorithm arrays, indexed by DFS number
+    std::vector<int> parent;
+    std::vector<int> sdom;
+    std::vector<int> idom;
+    std::vector<int> ancestor;
+    std::vector<int> best;
+
+    void dfs(int u) {
+        arr[u] = ++timer;
+        rev[timer] = u;
+
+        sdom[timer] = timer;
+        best[timer] = timer;
+
+        for (int v : g[u]) {
+            if (arr[v] == 0) {
+                dfs(v);
+                parent[arr[v]] = arr[u];
+            }
+            if (arr[v] != 0) {
+                rg[arr[v]].push_back(arr[u]);
+            }
+        }
+    }
+
+    void compress(int v) {
+        if (ancestor[ancestor[v]] != 0) {
+            compress(ancestor[v]);
+
+            if (sdom[best[ancestor[v]]] < sdom[best[v]]) {
+                best[v] = best[ancestor[v]];
+            }
+            ancestor[v] = ancestor[ancestor[v]];
+        }
+    }
+
+    int eval(int v) {
+        if (ancestor[v] == 0)
+            return best[v];
+
+        compress(v);
+
+        if (sdom[best[ancestor[v]]] < sdom[best[v]]) {
+            return best[ancestor[v]];
+        }
+
+        return best[v];
+    }
+
+    void link(int p, int v) {
+        ancestor[v] = p;
+    }
+
+public:
+    LengauerTarjan(int n) : n(n) {
+        g.resize(n + 1);
+        arr.assign(n + 1, 0);
+        rev.assign(n + 1, 0);
+        rg.resize(n + 1);
+        bucket.resize(n + 1);
+        parent.assign(n + 1, 0);
+        sdom.assign(n + 1, 0);
+        idom.assign(n + 1, 0);
+        ancestor.assign(n + 1, 0);
+        best.assign(n + 1, 0);
+    }
+
+    void addEdge(int u, int v) {
+        g[u].push_back(v);
+    }
+
+    std::vector<int> compute(int start) {
+        dfs(start);
+        int N = timer;
+        for (int i = N; i >= 2; --i) {
+            for (int p : rg[i]) {
+                int u = eval(p);
+                sdom[i] = std::min(sdom[i], sdom[u]);
+            }
+            bucket[sdom[i]].push_back(i);
+            link(parent[i], i);
+
+            for (int v : bucket[parent[i]]) {
+                int u = eval(v);
+                if (sdom[u] == sdom[v])
+                    idom[v] = sdom[v];
+                else
+                    idom[v] = u;
+            }
+            bucket[parent[i]].clear();
+        }
+
+        for (int i = 2; i <= N; ++i) {
+            if (idom[i] != sdom[i]) {
+                idom[i] = idom[idom[i]];
+            }
+        }
+        std::vector<int> result(n + 1, -1);
+        result[start] = -1;
+        for (int i = 2; i <= N; ++i) {
+            int v = rev[i];
+            result[v] = rev[idom[i]];
+        }
+        return result;
+    }
+};
