@@ -19,7 +19,7 @@ class DominatorAnalyzer:
         for u in self.order:
             for v in self.g[u]:
                 if v in self.reachable:
-                    self.preds[v].append(v)
+                    self.preds[v].append(u)
 
         self.dom = self._compute_dominators()
         self.idom = self._compute_idom_from_dom()
@@ -81,8 +81,8 @@ class DominatorAnalyzer:
                     break
         return idom
 
-    def _semi_path_exits(self, u, v):
-        treshold = self.pre[v]
+    def _semi_path_exists(self, u, v):
+        threshold = self.pre[v]
         stack = [u]
         seen = {u}
         while stack:
@@ -93,10 +93,10 @@ class DominatorAnalyzer:
                     continue
                 if y in seen:
                     continue
-                if self.pre[y] >= treshold:
+                if self.pre[y] >= threshold:
                     seen.add(y)
                     stack.append(y)
-        return True 
+        return False
 
     def _compute_sdom(self):
         sdom = {self.s: None}
@@ -105,8 +105,8 @@ class DominatorAnalyzer:
                 continue
             for u in self.order:
                 if self.pre[u] >= self.pre[v]:
-                    continue
-                if self._semi_path_exits(u, v):
+                    break
+                if self._semi_path_exists(u, v):
                     sdom[v] = u 
                     break 
         return sdom
