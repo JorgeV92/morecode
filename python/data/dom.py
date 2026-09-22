@@ -69,11 +69,47 @@ class DominatorAnalyzer:
                     changed = True 
         return dom
 
-    def _compute_idom_from_dom():
-        pass 
+    def _compute_idom_from_dom(self):
+        idom = {self.s: None} 
+        for v in self.order:
+            if v == self.s:
+                continue
+            strict = self.dom[v] - {v}
+            for d in strict:
+                if all(x in self.dom[d] for x in strict if x != d):
+                    idom[v] = d 
+                    break
+        return idom
 
-    def _compute_sdom():
-        pass 
+    def _semi_path_exits(self, u, v):
+        treshold = self.pre[v]
+        stack = [u]
+        seen = {u}
+        while stack:
+            x = stack.pop()
+            if x == v: return True 
+            for y in self.g[x]:
+                if y not in self.reachable: 
+                    continue
+                if y in seen:
+                    continue
+                if self.pre[y] >= treshold:
+                    seen.add(y)
+                    stack.append(y)
+        return True 
+
+    def _compute_sdom(self):
+        sdom = {self.s: None}
+        for v in self.order:
+            if v == self.s:
+                continue
+            for u in self.order:
+                if self.pre[u] >= self.pre[v]:
+                    continue
+                if self._semi_path_exits(u, v):
+                    sdom[v] = u 
+                    break 
+        return sdom 
 
     def _compute_rdom():
         pass  
