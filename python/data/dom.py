@@ -14,12 +14,12 @@ class DominatorAnalyzer:
         self._build_dfs_tree()
         self.reachable = set(self.order)
 
-        self.pred = {u: [] for u in self.order}
+        self.preds = {u: [] for u in self.order}
 
         for u in self.order:
             for v in self.g[u]:
                 if v in self.reachable:
-                    self.pred[v].append(v)
+                    self.preds[v].append(v)
 
         self.dom = self._compute_dominators()
         self.idom = self._compute_idom_from_dom()
@@ -44,7 +44,30 @@ class DominatorAnalyzer:
         dfs(self.s)
 
     def _compute_dominators(self):
-        pass 
+        nodes = self.order 
+        all_nodes = set(nodes)
+        dom = {}
+        for v in nodes:
+            if v == self.s:
+                dom[v] = {v}
+            else:
+                dom[v] = set(all_nodes)
+        changed = True  
+
+        while changed:
+            changed = False 
+            for v in nodes:
+                if v == self.s:
+                    continue
+                predecessors = self.preds[v]
+                common = set(dom[predecessors[0]])
+                for p in predecessors[1:]:
+                    common &= dom[p] 
+                new_dom = {v} | common
+                if new_dom != dom[v]:
+                    dom[v] = new_dom
+                    changed = True 
+        return dom
 
     def _compute_idom_from_dom():
         pass 
