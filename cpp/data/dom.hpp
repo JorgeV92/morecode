@@ -343,3 +343,35 @@ public:
         return result;
     }
 };
+
+void testLT() {
+    LengauerTarjan dom(9);
+    dom.addEdge(1, 2);
+    dom.addEdge(1, 3);
+    dom.addEdge(2, 3);
+    dom.addEdge(2, 5);
+    dom.addEdge(2, 9);
+    dom.addEdge(3, 4);
+    dom.addEdge(4, 2);
+    dom.addEdge(5, 6);
+    dom.addEdge(5, 8);
+    dom.addEdge(6, 7);
+    dom.addEdge(6, 3);
+    dom.addEdge(7, 1);
+    dom.addEdge(7, 4);
+    dom.addEdge(7, 5);
+    dom.addEdge(8, 7);
+    dom.addEdge(9, 5);
+    dom.addEdge(9, 8);
+
+    std::vector<int> idom = dom.compute(1);
+
+    for (int v = 1; v <= 9; ++v) {
+        std::cout << "idom(" << v << ") = ";
+
+        if (idom[v] == -1)
+            std::cout << "none\n";
+        else
+            std::cout << idom[v] << '\n';
+    }
+}
