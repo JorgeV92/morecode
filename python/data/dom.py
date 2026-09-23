@@ -230,6 +230,40 @@ class LengauerTarjan:
         return result 
 
 
+def critical_nodes(n, edges):
+    rev_adj = [[] for _ in range(n)]
+    for a, b in edges:
+        a -= 1
+        b -= 1
+        rev_adj[b].append(a)
+    all_cities = set(range(n))
+    dom = [set(all_cities) for _ in range(n)]
+    dom[0] = {0}
+
+    while True:
+        changed = False
+        new_dom = [set() for _ in range(n)]
+        new_dom[0] = {0}
+        for city in range(1, n):
+            updated = set(all_cities)
+            for prev in rev_adj[city]:
+                updated &= dom[prev]
+            updated.add(city)
+            if updated != dom[city]:
+                changed = True
+            new_dom[city] = updated
+        dom = new_dom
+        if not changed:
+            break
+        
+    critical = []
+
+    for city in range(n):
+        if city in dom[n - 1]:
+            critical.append(city + 1)
+
+    return critical
+
 def test_lt():
     lt = LengauerTarjan(9)
     lt.add_edge(1, 2)
