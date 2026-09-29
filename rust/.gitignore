@@ -1,0 +1,12 @@
+# Build artifacts
+/target
+
+# Debug symbols
+**/*.pdb
+
+# Backup files from editors
+**/*.rs.bk
+
+# IDE / editor folders
+.idea/
+.vscode/
