@@ -1,0 +1,42 @@
+package main
+
+import "fmt"
+
+// Knuth-Morris-Pratt Algorithm
+func pi(s string) []int {
+	n := len(s)
+	piS := make([]int, n)
+	j := 0
+	for i := 1; i < n; i++ {
+		for j > 0 && s[j] != s[i] {
+			j = piS[j-1]
+		}
+		if s[i] == s[j] {
+			j++
+		}
+		piS[i] = j
+	}
+	return piS
+}
+
+// string matching
+// Given a string and a pattern
+// count the number of positions where
+// the pattern occurs in the string
+func stringMatching(t string, p string) int {
+	s := p + "#" + t
+	piS := pi(s)
+	ans := 0
+	m := len(p)
+	for _, v := range piS {
+		if v == m {
+			ans++
+		}
+	}
+	return ans
+}
+
+func main() {
+	fmt.Println("Hello, strings!")
+	fmt.Println(stringMatching("saippuakauppias", "pp"))
+}
