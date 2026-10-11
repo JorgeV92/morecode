@@ -1,0 +1,32 @@
+# Build outputs
+bin/
+build/
+dist/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+/strings/strings_view
+
+# Test binaries, coverage reports, and profiling output
+*.test
+*.out
+*.prof
+coverage/
+coverage.txt
+coverage.html
+
+# Local Go workspace and caches
+go.work
+go.work.sum
+.cache/
+
+# Editor and OS files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
