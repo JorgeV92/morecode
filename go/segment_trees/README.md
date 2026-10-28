@@ -52,8 +52,10 @@ For `a = [2, 1, 4, 0, 3]` and `x = 8`:
 
 The complete implementation is in [`searching_prefix.go`](searching_prefix.go). It builds a sum segment tree and implements the single-descent search in `FirstPrefixAtLeast`.
 
-Run the example with:
+For a related example, see [Searching for the first element greater than a given value](first_greater_than.md).
+
+Run the examples with:
 
 ```bash
-go run searching_prefix.go
+go run .
 ```

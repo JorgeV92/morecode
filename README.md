@@ -18,7 +18,7 @@ Directories named with numbers, such as `c/520/` or `cpp/509/`, group solutions 
 
 - **Maximum alternating sum:** C and Python use coordinate compression with Fenwick trees in `499/D`.
 - **Valid subarrays:** C, C++, and Python answer offline range queries with Mo's algorithm in `516/D`.
-- **Segment trees:** C uses one for lowest common ancestor queries in `c/data/lca_seg.c`; Go uses one to find the shortest prefix with a given sum in [`go/segment_trees/`](go/segment_trees/), including a recursive `O(log n)` search and a detailed explanation.
+- **Segment trees:** C uses one for lowest common ancestor queries in `c/data/lca_seg.c`. The [`go/segment_trees/`](go/segment_trees/) examples find the shortest prefix with a given sum and the first element greater than a value within a range, using recursive `O(log n)` searches and detailed explanations.
 
 ## Running the standalone examples
 

@@ -64,4 +64,9 @@ func main() {
 	for _, x := range []int{0, 1, 3, 7, 8, 10, 11} {
 		fmt.Printf("x = %2d, first prefix length = %d\n", x, tree.FirstPrefixAtLeast(x))
 	}
+
+	maxTree := NewMaxSegmentTree([]int{4, 1, 7, 3, 7, 2})
+	fmt.Println("First element greater than 4 in [1, 6):", maxTree.FirstGreaterThan(1, 6, 4))
+	fmt.Println("First element greater than 6 in [3, 6):", maxTree.FirstGreaterThan(3, 6, 6))
+	fmt.Println("First element greater than 7 in [0, 6):", maxTree.FirstGreaterThan(0, 6, 7))
 }
