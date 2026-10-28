@@ -7,7 +7,7 @@ A collection of algorithms and data structures implemented in C, C++, Go, Python
 | Directory | Contents |
 | --- | --- |
 | [`c/`](c/) | Fenwick trees, Mo's algorithm, interval processing, prefix sums, and lowest common ancestor using an Euler tour and segment tree. |
-| [`cpp/`](cpp/) | Solutions using prefix sums, subsequence matching, divisor grouping, palindrome radii, and Mo's algorithm. |
+| [`cpp/`](cpp/) | Solutions using prefix sums, subsequence matching, divisor grouping, palindrome radii, Mo's algorithm, and segment trees. |
 | [`go/`](go/) | Standalone examples of depth-first search, Knuth–Morris–Pratt string matching, and segment trees. |
 | [`python/`](python/) | Fenwick trees, Mo's algorithm, dominator analysis, and Pareto-optimal points. |
 | [`rust/`](rust/) | A Cargo project containing an Edmonds–Karp maximum-flow implementation. |
@@ -18,7 +18,7 @@ Directories named with numbers, such as `c/520/` or `cpp/509/`, group solutions 
 
 - **Maximum alternating sum:** C and Python use coordinate compression with Fenwick trees in `499/D`.
 - **Valid subarrays:** C, C++, and Python answer offline range queries with Mo's algorithm in `516/D`.
-- **Segment trees:** C uses one for lowest common ancestor queries in `c/data/lca_seg.c`. The [`go/segment_trees/`](go/segment_trees/) examples find the shortest prefix with a given sum and the first element greater than a value within a range, using recursive `O(log n)` searches and detailed explanations.
+- **Segment trees:** C uses one for lowest common ancestor queries in `c/data/lca_seg.c`. The [`cpp/segment_trees/`](cpp/segment_trees/) and [`go/segment_trees/`](go/segment_trees/) examples find the shortest prefix with a given sum and the first element greater than a value within a range, using recursive `O(log n)` searches and detailed explanations.
 
 ## Running the standalone examples
 
